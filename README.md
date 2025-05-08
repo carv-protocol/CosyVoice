@@ -76,6 +76,22 @@ sudo apt-get install sox libsox-dev
 sudo yum install sox sox-devel
 ```
 
+``` sh
+# use venv
+
+python3.9 -m venv .venv
+
+source .venv/bin/activate
+
+pip install -r requirements.txt
+# If you encounter sox compatibility issues
+# ubuntu
+sudo apt-get install sox libsox-dev
+# centos
+sudo yum install sox sox-devel
+sudo yum install python3-devel
+```
+
 **Model download**
 
 We strongly recommend that you download our pretrained `CosyVoice2-0.5B` `CosyVoice-300M` `CosyVoice-300M-SFT` `CosyVoice-300M-Instruct` model and `CosyVoice-ttsfrd` resource.
@@ -98,6 +114,11 @@ git clone https://www.modelscope.cn/iic/CosyVoice-300M.git pretrained_models/Cos
 git clone https://www.modelscope.cn/iic/CosyVoice-300M-SFT.git pretrained_models/CosyVoice-300M-SFT
 git clone https://www.modelscope.cn/iic/CosyVoice-300M-Instruct.git pretrained_models/CosyVoice-300M-Instruct
 git clone https://www.modelscope.cn/iic/CosyVoice-ttsfrd.git pretrained_models/CosyVoice-ttsfrd
+```
+
+```sh
+mkdir pretrained_models
+python download_models.py
 ```
 
 Optionally, you can unzip `ttsfrd` resouce and install `ttsfrd` package for better text normalization performance.
@@ -239,3 +260,9 @@ You can also scan the QR code to join our official Dingding chat group.
 
 ## Disclaimer
 The content provided above is for academic purposes only and is intended to demonstrate technical capabilities. Some examples are sourced from the internet. If any content infringes on your rights, please contact us to request its removal.
+
+## Examples
+python cosyvoice_manager.py --model_path pretrained_models/CosyVoice2-0.5B --action fine_control --text "没有物质的爱情，就像一盘散沙[breath]，都不用风吹，走两步就散了[laughter], 还不如一起吃溜溜梅呗." --prompt_audio asset/taimeizhubo.wav --output_dir output
+
+
+python cosyvoice_manager.py --model_path pretrained_models/CosyVoice2-0.5B --action instruct --text "没有物质的爱情，就像一盘散沙，都不用风吹，走两步就散了, 还不如一起吃溜溜梅呗." --instruction "请用台湾腔说这句话" --prompt_audio asset/yangmi.wav --output_dir output
