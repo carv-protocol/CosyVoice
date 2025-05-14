@@ -1,0 +1,38 @@
+# CosyVoice2 FastAPI 依赖
+
+# Web框架
+fastapi>=0.104.0
+uvicorn>=0.23.0
+pydantic>=2.4.2
+
+# 音频处理
+torch>=2.0.0
+torchaudio>=2.0.0
+numpy>=1.20.0,<2.0.0
+scipy>=1.10.0
+
+# 文本处理
+regex>=2022.0.0
+tn>=0.0.4
+python-dateutil>=2.8.0
+transformers>=4.31.0
+omegaconf>=2.0.0
+
+# 模型处理
+modelscope>=1.11.0
+onnxruntime>=1.15.0
+conformer
+diffusers>=0.13.0
+accelerate>=0.13.0
+hydra-core>=1.1.0
+pytorch-lightning>=1.9.0
+lightning>=2.0.0
+
+# 其他工具
+python-multipart
+hyperpyyaml>=1.0.0
+inflect>=6.0.0
+matplotlib
+numba
+pandas
+scikit-learn 
