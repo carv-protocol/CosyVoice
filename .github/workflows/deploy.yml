@@ -1,0 +1,59 @@
+name: deploy-to
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      cluster:
+        required: true
+        type: string
+    secrets:
+      KUBERNETES_PULL_KEY:
+        required: false
+
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: echo version
+        run: echo ${{ inputs.version }}
+
+      - name: generate app name
+        run: |
+          APP_NAME=$(basename ${{ github.repository }})
+          echo "APP_NAME=$APP_NAME" >> $GITHUB_ENV
+
+      - name: generate env name
+        run: |
+          if [[ "${{ github.ref_name }}" =~ ^dev ]]; then
+            echo "DEPLOY_ENV=dev" >> $GITHUB_ENV
+          elif [[ "${{ github.ref_name }}" =~ ^main ]]; then
+            echo "DEPLOY_ENV=prod" >> $GITHUB_ENV
+          fi
+          echo "DEPLOY_ENV: ${{env.DEPLOY_ENV}}"
+
+
+      - name: check helm repository code
+        uses: actions/checkout@v4
+        with:
+          repository: carv-protocol/kubernetes
+          ref: main
+          ssh-key: ${{ secrets.KUBERNETES_PULL_KEY }}
+
+
+      - name: Update Helm
+        run: |
+          sed -i "s|image: .*|image: carv-harbor.tencentcloudcr.com/${{ github.repository }}:${{ github.ref_name }}-${{ inputs.version }}|" env/${{ env.DEPLOY_ENV }}/${{ inputs.cluster }}/apps/${{ env.APP_NAME }}/${{ env.APP_NAME }}.yaml
+          git config --global user.email "pipeline@example.com"
+          git config --global user.name "github pipeline"
+          git add . 
+          git commit -m "github pipeline update the repo image" 
+          git push origin main  > /dev/null 2>&1
+          
+        
+
+
+
