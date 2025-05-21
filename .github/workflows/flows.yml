@@ -13,3 +13,4 @@ jobs:
     secrets: inherit
     with:
       version: ${{ needs.build.outputs.version }}
+      cluster: ai
