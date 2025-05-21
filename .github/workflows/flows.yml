@@ -5,11 +5,11 @@ on:
 
 jobs:
   build:
-    uses: ./.github/workflows/generate.yml@main
+    uses: ./.github/workflows/generate.yml
     secrets: inherit
   deploy:
     needs: build
-    uses: ./.github/workflows/deploy.yml@main
+    uses: ./.github/workflows/deploy.yml
     secrets: inherit
     with:
       version: ${{ needs.build.outputs.version }}
