@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    uses: ./.github/workflows/build.yml@main
+    uses: ./.github/workflows/generate.yml@main
     secrets: inherit
   deploy:
     needs: build

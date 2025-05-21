@@ -1,0 +1,51 @@
+name: build-image
+on:
+  workflow_call:
+    secrets:
+      TENCENT_LOGIN_KEY:
+        required: false
+      CARV_DEPLOY_SSH_KEY:
+        required: false
+      COMMON_PAT_TOKEN:
+        required: false
+    outputs:
+      version:
+        description: "generate version"
+        value: ${{ jobs.build.outputs.version }}
+    inputs:
+      args:
+        type: string
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.set_version.outputs.VERSION }}  # 将版本号作为输出
+    steps:
+      - name: checkout repository code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{github.ref_name}}
+
+      - name: generate version
+        id: set_version
+        run: |
+          VERSION="$(echo $GITHUB_SHA | cut -c 1-7)-$(date +%s)"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: docker login remote repo
+        run: |
+          docker login carv-harbor.tencentcloudcr.com --username 'tcr$github' --password '${{secrets.TENCENT_LOGIN_KEY}}'
+
+      - name: docker build images and push to repo
+        run: |
+          docker build --build-arg CARV_DEPLOY_SSH_KEY="${{ secrets.CARV_DEPLOY_SSH_KEY }}" --build-arg COMMON_PAT_TOKEN="${{ secrets.COMMON_PAT_TOKEN }}" ${{ inputs.args }} -f Dockerfile -t carv-harbor.tencentcloudcr.com/${{ github.repository }}:${{ github.ref_name }}-${{ env.VERSION }} .
+
+      - name: docker push to remote repo
+        run: |
+          docker push carv-harbor.tencentcloudcr.com/${{ github.repository }}:${{ github.ref_name }}-${{ env.VERSION }}
+          
+          
+          
